@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFM.Api", "WFM.Api\WFM.Api.csproj", "{B6243F64-FFB3-41D3-BC9D-F2451C145A39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFM.Database", "WFM.Database\WFM.Database.csproj", "{8DF1E29C-7909-411E-BC7B-54601581630B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFM.UxModels", "WFM.UxModels\WFM.UxModels.csproj", "{909A2E38-41B6-4302-BE8F-4AE63C87535B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B6243F64-FFB3-41D3-BC9D-F2451C145A39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6243F64-FFB3-41D3-BC9D-F2451C145A39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6243F64-FFB3-41D3-BC9D-F2451C145A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6243F64-FFB3-41D3-BC9D-F2451C145A39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DF1E29C-7909-411E-BC7B-54601581630B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DF1E29C-7909-411E-BC7B-54601581630B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DF1E29C-7909-411E-BC7B-54601581630B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DF1E29C-7909-411E-BC7B-54601581630B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{909A2E38-41B6-4302-BE8F-4AE63C87535B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{909A2E38-41B6-4302-BE8F-4AE63C87535B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{909A2E38-41B6-4302-BE8F-4AE63C87535B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{909A2E38-41B6-4302-BE8F-4AE63C87535B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+	EndGlobalSection
+EndGlobal
