@@ -5,4 +5,15 @@ using WFM.Database.Repositories.Interfaces;
 namespace WFM.Api.Services;
 
 public class EmployeesJobHistoryService(IEmployeesJobHistoryRepository repository)
-    : BaseService<EmployeesJobHistory>(repository), IEmployeesJobHistoryService; 
+    : BaseService<EmployeesJobHistory>(repository), IEmployeesJobHistoryService
+{
+    public async Task<List<EmployeesJobHistory>> GetJobsByEmployeeIdAsync(int employeeId)
+    {
+        return await repository.GetJobsByEmployeeIdAsync(employeeId);
+    }
+
+    public async Task<List<EmployeesJobHistory>> GetEmployeesByJobIdAsync(int jobId)
+    {
+        return await repository.GetEmployeesByJobIdAsync(jobId);
+    }
+}

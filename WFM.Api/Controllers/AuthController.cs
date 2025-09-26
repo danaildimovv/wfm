@@ -15,7 +15,7 @@ public class AuthController(IAuthService authService, IMapper mapper) : Controll
 {
     [HttpPost]
     [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(bool))]
-    public async Task<IActionResult> Register(UserUxModel user)
+    public async Task<IActionResult> RegisterAsync(UserUxModel user)
     {
         var isRegistered = await authService.RegisterAsync(user);
 
@@ -29,7 +29,7 @@ public class AuthController(IAuthService authService, IMapper mapper) : Controll
 
     [HttpPost]
     [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(string))]
-    public async Task<IActionResult> Login(UserUxModel model)
+    public async Task<IActionResult> LoginAsync(UserUxModel model)
     {
         var token = await authService.LoginAsync(model);
 

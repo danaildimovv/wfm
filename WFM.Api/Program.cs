@@ -97,6 +97,11 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IVacationRepository, VacationRepository>();
 builder.Services.AddScoped<IVacationService, VacationService>();
 
+builder.Services.AddScoped<IEmployeesBranchesHistoryRepository, EmployeesBranchesHistoryRepository>();
+builder.Services.AddScoped<IEmployeesBranchesHistoryService, EmployeesBranchesHistoryService>();
+
+builder.Services.AddScoped<IEmployeesJobHistoryRepository, EmployeesJobHistoryRepository>();
+builder.Services.AddScoped<IEmployeesJobHistoryService, EmployeesJobHistoryService>();
 
 var app = builder.Build();
 

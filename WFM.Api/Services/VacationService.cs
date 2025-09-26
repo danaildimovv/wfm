@@ -4,5 +4,11 @@ using WFM.Database.Repositories.Interfaces;
 
 namespace WFM.Api.Services;
 
-public class VacationService(IVacationRepository repository) 
-    : BaseService<Vacation>(repository), IVacationService;
+public class VacationService(IVacationRepository repository)
+    : BaseService<Vacation>(repository), IVacationService
+{
+    public async Task<IEnumerable<Vacation>> GetVacationsByEmployeeIdAsync(long employeeId)
+    {
+        return await repository.GetVacationsByEmployeeIdAsync(employeeId);
+    }
+}

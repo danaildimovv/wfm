@@ -71,6 +71,34 @@ public class PayrollController(IPayrollService payrollService, IMapper mapper) :
         }
     }
     
+    [HttpGet("{employeeId:int}")]
+    public async Task<IActionResult> GetPayrollByEmployeeIdAsync(int employeeId)
+    {
+        var payroll = await payrollService.GetByIdAsync(employeeId);
+
+        try
+        {
+            if (payroll is null)
+            {
+                return NotFound("No payroll found with the given id");
+            }
+            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = mapper.Map<PayrollUxModel>(payroll);
+            
+            return Ok(result);
+        }
+
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+    
     [Authorize (Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> AddPayrollAsync(PayrollUxModel model)

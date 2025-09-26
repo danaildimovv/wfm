@@ -79,7 +79,7 @@ public class EmployeeController(IEmployeeService employeeService, IMapper mapper
         }
 
         var employee = mapper.Map<Employee>(model);
-        var isSuccess = await employeeService.AddAsync(employee);
+        var isSuccess = await employeeService.AddEmployeeAsync(employee);
 
         if (isSuccess) return Ok("Employee was added successfully");
         
@@ -102,7 +102,7 @@ public class EmployeeController(IEmployeeService employeeService, IMapper mapper
         }
 
         var employee = mapper.Map<Employee>(model);
-        var isSuccess = await employeeService.UpdateAsync(employee);
+        var isSuccess = await employeeService.UpdateEmployeeAsync(employee);
 
         if (isSuccess) return Ok("Successfully saved.");
         

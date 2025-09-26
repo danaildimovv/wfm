@@ -21,7 +21,7 @@ public class BranchController(IBranchService branchService, IMapper mapper) : Co
         {
             if (!branch.Any())
             {
-                return NotFound("No branch");
+                return NotFound("No branches found.");
             }
             
             if (!ModelState.IsValid)
@@ -50,7 +50,7 @@ public class BranchController(IBranchService branchService, IMapper mapper) : Co
         {
             if (branch is null)
             {
-                return NotFound("No branch");
+                return NotFound("No branch found with the given id..");
             }
             
             if (!ModelState.IsValid)
