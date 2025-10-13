@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Npgsql;
 using WFM.Database.DbContext;
 using WFM.Api.Mappings;
 using WFM.Api.Services;
@@ -42,14 +43,14 @@ builder.Services.AddSwaggerGen(c => {
         }
     });
 });
-var connectionStringBuilder = new Npgsql.NpgsqlConnectionStringBuilder(builder.Configuration.GetConnectionString("DefaultConnection"))
+
+var connectionStringBuilder = new NpgsqlConnectionStringBuilder(builder.Configuration.GetConnectionString("ConnectionString"))
 {
-    Password = builder.Configuration["DB_PASSWORD"]
+    Username = builder.Configuration["DB_Username"],
+    Password = builder.Configuration["DB_Password"]
 };
 
-var connectionString = connectionStringBuilder.ConnectionString;
-
-builder.Services.AddDbContext<WfmContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<WfmContext>(options => options.UseNpgsql(connectionStringBuilder.ConnectionString));
 
 builder.Services.AddAuthentication((JwtBearerDefaults.AuthenticationScheme))
     .AddJwtBearer(opts =>
