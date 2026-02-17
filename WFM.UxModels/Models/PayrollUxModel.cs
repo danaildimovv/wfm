@@ -2,7 +2,7 @@ namespace WFM.UxModels.Models;
 
 public class PayrollUxModel
 {
-    public int PayrollId { get; set; }
+    public int Id { get; set; }
 
     public int HourlyRate { get; set; }
 

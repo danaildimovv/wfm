@@ -6,91 +6,44 @@ using WFM.Database.Models;
 using WFM.UxModels.Models;
 
 namespace WFM.Api.Controllers;
+
 [Route("api/[controller]/[action]")]
 [ApiController]
-
 public class VacationController(IVacationService vacationService, IMapper mapper) : Controller
 {
     [Authorize(Roles = "Admin")]
     [HttpGet]
-    public async Task<IActionResult> GetAllVacationsAsync()
+    public async Task<IActionResult> GetAllAsync()
     {
-        var vacations  = await vacationService.GetAllAsync();
-        
-        try
-        {
-            if (!vacations.Any())
-            {
-                return NotFound("No vacations found");
-            }
-            
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        var vacations = await vacationService.GetAllAsync();
+        var result = mapper.Map<IEnumerable<PayrollUxModel>>(vacations);
 
-            var result = mapper.Map<IEnumerable<PayrollUxModel>>(vacations);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
-    
+
     [Authorize(Roles = "Admin")]
     [HttpGet("{employeeId:long}")]
     public async Task<IActionResult> GetVacationsByEmployeeIdAsync(long employeeId)
     {
-        var vacations  = await vacationService.GetVacationsByEmployeeIdAsync(employeeId);
-        
-        try
-        {
-            if (!vacations.Any())
-            {
-                return NotFound("No vacations found");
-            }
-            
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        var vacations = await vacationService.GetVacationsByEmployeeIdAsync(employeeId);
+        var result = mapper.Map<IEnumerable<PayrollUxModel>>(vacations);
 
-            var result = mapper.Map<IEnumerable<PayrollUxModel>>(vacations);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
-    
+
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> AddVacationRequestAsync(VacationUxModel model)
+    public async Task<IActionResult> AddAsync(VacationUxModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var vacation = mapper.Map<Vacation>(model);
-        var isSuccess = await vacationService.AddAsync(vacation);
+        var isAdded = await vacationService.AddAsync(vacation);
 
-        if (isSuccess) return Ok("Vacation was added successfully");
-        
-        ModelState.AddModelError("Error", "Something Went Wrong");
-        return StatusCode(500, ModelState);
-
+        return Ok(isAdded);
     }
-    
-    [Authorize (Roles = "Admin")]
+
+    [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> UpdateVacationRequestAsync(VacationUxModel model)
+    public async Task<IActionResult> EditAsync(VacationUxModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -98,42 +51,17 @@ public class VacationController(IVacationService vacationService, IMapper mapper
         }
 
         var vacation = mapper.Map<Vacation>(model);
-        
-        var isSuccess = await vacationService.UpdateAsync(vacation);
+        var isEdited = await vacationService.UpdateAsync(vacation);
 
-        if (isSuccess) return Ok("Vacation was updated successfully");
-        
-        ModelState.AddModelError("Error", "Something Went Wrong");
-        return StatusCode(500, ModelState);
-
+        return Ok(isEdited);
     }
 
     [Authorize]
     [HttpDelete]
-    public async Task<IActionResult> DeleteVacationRequestAsync(int vacationId)
+    public async Task<IActionResult> DeleteAsync(int id)
     {
-        var vacation = await vacationService.GetByIdAsync(vacationId);
+        var isDeleted = await vacationService.DeleteAsync(id);
         
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        try
-        {
-            if (vacation is not null)
-            {
-                var isSuccess = await vacationService.DeleteAsync(vacation);
-
-                if (isSuccess) return Ok("Vacation was deleted successfully");
-            }
-
-            ModelState.AddModelError("Error", "Something Went Wrong");
-            return StatusCode(500, ModelState);
-        }
-        catch(Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(isDeleted);
     }
 }

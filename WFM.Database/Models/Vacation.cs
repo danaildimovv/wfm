@@ -1,9 +1,7 @@
 ﻿namespace WFM.Database.Models;
 
-public partial class Vacation
+public partial class Vacation : Root<int>
 {
-    public int VacationId { get; set; }
-
     public int EmployeeId { get; set; }
 
     public DateOnly StartDate { get; set; }

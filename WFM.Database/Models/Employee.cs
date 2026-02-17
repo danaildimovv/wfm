@@ -1,9 +1,7 @@
 ﻿namespace WFM.Database.Models;
 
-public partial class Employee
+public partial class Employee : Root<int>
 {
-    public int EmployeeId { get; set; }
-
     public string FirstName { get; set; } = null!;
 
     public string LastName { get; set; } = null!;

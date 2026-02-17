@@ -1,9 +1,7 @@
 ﻿namespace WFM.Database.Models;
 
-public partial class Job
+public partial class Job : Root<int>
 {
-    public int JobId { get; set; }
-
     public string JobTitle { get; set; } = null!;
 
     public int DepartmentId { get; set; }

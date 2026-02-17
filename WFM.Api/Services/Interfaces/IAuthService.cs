@@ -7,5 +7,5 @@ public interface IAuthService
 {
     public Task<bool> RegisterAsync(UserUxModel user);
     
-    public Task<string?> LoginAsync(UserUxModel user);
+    public Task<string> LoginAsync(UserUxModel user);
 }

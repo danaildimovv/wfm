@@ -3,14 +3,16 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using WFM.Api.Exceptions;
 using WFM.Api.Services.Interfaces;
 using WFM.Database.Models;
 using WFM.Database.Repositories.Interfaces;
 using WFM.UxModels.Models;
+using AuthenticationException = System.Security.Authentication.AuthenticationException;
 
 namespace WFM.Api.Services;
 
-public class AuthService(IConfiguration configuration, IRoleService roleService, IUserRepository repository) : IAuthService
+public class AuthService(IConfiguration configuration, IUserRepository repository) : IAuthService
 {
     private const int SaltSize = 16;
     private const int HashSize = 32;
@@ -23,7 +25,7 @@ public class AuthService(IConfiguration configuration, IRoleService roleService,
         var user = await repository.GetByUsernameAsync(model.Username);
         if (user is not null)
         {
-            return false;
+            throw new AlreadyExistsException("Username already exists");
         }
         
         var passwordSalt = RandomNumberGenerator.GetBytes(SaltSize);
@@ -40,36 +42,35 @@ public class AuthService(IConfiguration configuration, IRoleService roleService,
         return await repository.AddAsync(newUser);
     }
     
-    public async Task<string?> LoginAsync(UserUxModel model)
+    public async Task<string> LoginAsync(UserUxModel model)
     {
         var user = await repository.GetByUsernameAsync(model.Username);
-        
 
-        if (user is null)
+        if (user is null || !VerifyPassword(model.Password, user.PasswordSalt, user.PasswordHash))
         {
-            return null;
-        }
-        
-        var inputHash = Rfc2898DeriveBytes.Pbkdf2(model.Password, user.PasswordSalt, Iterations, Algorithm, HashSize);
-        var isPasswordValid = CryptographicOperations.FixedTimeEquals(inputHash, user.PasswordHash);
-
-        if (!isPasswordValid)
-        {
-            return null;
+            throw new UnauthorizedAccessException("Invalid username or password");
         }
         
         var token = CreateToken(user);
         
         return token;
     }
+
+    private static bool VerifyPassword(string password, byte[] passwordSalt, byte[] passwordHash)
+    {
+        var inputHash = Rfc2898DeriveBytes.Pbkdf2(password, passwordSalt, Iterations, Algorithm, HashSize);
+        var isPasswordValid = CryptographicOperations.FixedTimeEquals(inputHash, passwordHash);
+        
+        return isPasswordValid;
+    }
     
     private string CreateToken(User user)
     {   
         var claims = new Dictionary<string, object>
         {
-            [ClaimTypes.Name] = user.Username,
-            [ClaimTypes.NameIdentifier] = user.UserId.ToString(),
-            [ClaimTypes.Role] = user.Role.RoleTitle,
+            ["username"] = user.Username,
+            ["userId"] = user.Id.ToString(),
+            ["role"] = user.Role.RoleTitle,
         };
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(configuration.GetValue<string>("KEY")!));

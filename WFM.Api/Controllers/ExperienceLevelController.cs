@@ -13,92 +13,39 @@ public class ExperienceLevelController(IExperienceLevelService experienceLevelSe
 {
     [Authorize]
     [HttpGet]
-    public async Task<IActionResult> GetAllExperienceLevelsAsync()
+    public async Task<IActionResult> GetAllAsync()
     {
         var experienceLevels = await experienceLevelService.GetAllAsync();
-        
-        try
-        {
-            if (!experienceLevels.Any())
-            {
-                return NotFound("No experience levels found");
-            }
+        var result = mapper.Map<IEnumerable<ExperienceLevelUxModel>>(experienceLevels);
             
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = mapper.Map<IEnumerable<ExperienceLevelUxModel>>(experienceLevels);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
     
     [Authorize]
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetExperienceLevelByIdAsync(int id)
+    public async Task<IActionResult> GetByIdAsync(int id)
     {
         var experienceLevel = await experienceLevelService.GetByIdAsync(id);
-
-        try
-        {
-            if (experienceLevel is null)
-            {
-                return NotFound("No experience level found");
-            }
+        var result = mapper.Map<ExperienceLevel>(experienceLevel);
             
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = mapper.Map<ExperienceLevel>(experienceLevel);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
     
     [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> AddExperienceLevelAsync(ExperienceLevelUxModel model)
+    public async Task<IActionResult> AddAsync(ExperienceLevelUxModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var experienceLevel = mapper.Map<ExperienceLevel>(model);
-        var isSuccess = await experienceLevelService.AddAsync(experienceLevel);
+        var isAdded = await experienceLevelService.AddAsync(experienceLevel);
 
-        if (isSuccess)
-        {
-            return Ok("Success in creating");
-        }
-
-        ModelState.AddModelError("", "Something Went Wrong");
-        return StatusCode(500, ModelState);
+        return Ok(isAdded);
     }
     
     [Authorize(Roles = "Admin")]
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> EditExperienceLevelAsync(int id, ExperienceLevelUxModel model)
+    public async Task<IActionResult> EditAsync(int id, ExperienceLevelUxModel model)
     {
-        if (id != model.ExperienceLevelId)
-        {
-            return BadRequest(ModelState);
-        }
-        if (!ModelState.IsValid)
+        if (id != model.Id)
         {
             return BadRequest(ModelState);
         }
@@ -106,36 +53,15 @@ public class ExperienceLevelController(IExperienceLevelService experienceLevelSe
         var experienceLevel = mapper.Map<ExperienceLevel>(model);
         var isUpdated = await experienceLevelService.UpdateAsync(experienceLevel);
 
-        if (isUpdated) return Ok("Updated");
-        
-        ModelState.AddModelError("", "Something Went Wrong");
-        return StatusCode(500, ModelState);
+        return Ok(isUpdated);
     }
-    
+
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteExperienceLevelAsync(int id)
+    public async Task<IActionResult> DeleteAsync(int id)
     {
-        var experienceLevel = await experienceLevelService.GetByIdAsync(id);
+        var isDeleted = await experienceLevelService.DeleteAsync(id);
         
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
-        try
-        {
-            if (experienceLevel is not null)
-            {
-                var isDeleted = await experienceLevelService.DeleteAsync(experienceLevel);
-
-                if (isDeleted) return Ok("Success");
-            }
-            
-            ModelState.AddModelError("", "Error");
-            return StatusCode(500, ModelState);
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(isDeleted);
     }
 }

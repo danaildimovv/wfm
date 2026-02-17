@@ -1,9 +1,7 @@
 ﻿namespace WFM.Database.Models;
 
-public partial class Payroll
+public partial class Payroll : Root<int>
 {
-    public int PayrollId { get; set; }
-
     public int HourlyRate { get; set; }
 
     public int GrossSalary { get; set; }

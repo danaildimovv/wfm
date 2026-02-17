@@ -1,14 +1,14 @@
-﻿namespace WFM.Database.Models;
+﻿using WFM.Api.Enums;
 
-public partial class User
+namespace WFM.Database.Models;
+
+public partial class User : Root<int>
 {
-    public int UserId { get; set; }
-
     public string Username { get; set; } = null!;
 
     public byte[] PasswordHash { get; set; } = null!;
 
-    public int RoleId { get; set; } = 2;
+    public int RoleId { get; set; } = (int)RoleEnum.RegularUser;
 
     public byte[] PasswordSalt { get; set; } = null!;
 

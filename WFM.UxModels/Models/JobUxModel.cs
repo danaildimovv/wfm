@@ -2,7 +2,7 @@ namespace WFM.UxModels.Models;
 
 public class JobUxModel
 {
-    public int JobId { get; set; }
+    public int Id { get; set; }
 
     public string JobTitle { get; set; } = null!;
 

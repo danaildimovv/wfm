@@ -2,9 +2,9 @@ namespace WFM.UxModels.Models;
 
 public class BranchUxModel
 {
-    public int BranchId { get; set; }
+    public int Id { get; set; }
 
     public string BranchName { get; set; } = null!;
 
-    public int BranchCountryId { get; set; }
+    public int CountryId { get; set; }
 }

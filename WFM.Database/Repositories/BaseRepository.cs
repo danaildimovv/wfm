@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using WFM.Api.Exceptions;
 using WFM.Database.DbContext;
 using WFM.Database.Repositories.Interfaces;
 
@@ -16,33 +18,50 @@ public class BaseRepository<T>(WfmContext dbContext) : IBaseRepository<T>
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _entity.ToListAsync();
+        return await _entity
+            .OrderBy(x => EF.Property<int>(x, "Id"))
+            .ToListAsync();
     }
 
     public async Task<bool> AddAsync(T entity)
     {
-        ArgumentNullException.ThrowIfNull(entity);
         await _entity.AddAsync(entity);
         return await SaveAsync();
     }
-    
+
     public async Task<bool> UpdateAsync(T entity)
     {
-        ArgumentNullException.ThrowIfNull(entity);
-        _entity.Update(entity);
+        _entity.Attach(entity);
+        dbContext.Entry(entity).State = EntityState.Modified;
+
         return await SaveAsync();
     }
-    
+
     public async Task<bool> SaveAsync()
-    {   
+    {
         var saved = await dbContext.SaveChangesAsync();
         return saved > 0;
     }
-    
+
     public async Task<bool> DeleteAsync(T entity)
     {
-        ArgumentNullException.ThrowIfNull(entity);
         _entity.Remove(entity);
-        return await SaveAsync();
+        
+        try
+        {
+            return await SaveAsync();
+        }
+        catch(DbUpdateException ex) when (IsFkViolation(ex))
+        {
+            throw new ResourceInUseException(
+                "The entity cannot be deleted because it is referenced by other data."
+            );
+        }
+    }
+
+    private static bool IsFkViolation(DbUpdateException ex)
+    {
+        return ex.InnerException is PostgresException pgEx
+               && pgEx.SqlState == PostgresErrorCodes.ForeignKeyViolation;
     }
 }

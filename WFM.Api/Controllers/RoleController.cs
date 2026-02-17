@@ -9,102 +9,49 @@ namespace WFM.Api.Controllers;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
-
 public class RoleController(IRoleService roleService, IMapper mapper) : Controller
 {
     [Authorize]
     [HttpGet]
-    public async Task<IActionResult> GetAllRolesAsync()
+    public async Task<IActionResult> GetAllAsync()
     {
-        var roles  = await roleService.GetAllAsync();
+        var roles = await roleService.GetAllAsync();
         var result = mapper.Map<IEnumerable<RoleUxModel>>(roles);
-        
-        try
-        {
-            if (result is null)
-            {
-                return NotFound("No roles found");
-            }
-            
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
-    
-    [Authorize (Roles = "Admin")]
+
+    [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> AddRoleAsync(RoleUxModel model)
+    public async Task<IActionResult> AddAsync(RoleUxModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var role = mapper.Map<Role>(model);
-        var isSuccess = await roleService.AddAsync(role);
+        var isAdded = await roleService.AddAsync(role);
 
-        if (isSuccess) return Ok("Role was added successfully");
-        
-        ModelState.AddModelError("Error", "Something Went Wrong");
-        return StatusCode(500, ModelState);
-
+        return Ok(isAdded);
     }
-    
-    [Authorize (Roles = "Admin")]
+
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> EditRoleAsync(int id, RoleUxModel model)
+    public async Task<IActionResult> EditAsync(int id, RoleUxModel model)
     {
-        if (id != model.RoleId)
-        {
-            return BadRequest(ModelState);
-        }
-        if (!ModelState.IsValid)
+        if (id != model.Id)
         {
             return BadRequest(ModelState);
         }
 
         var role = mapper.Map<Role>(model);
-        var isSuccess = await roleService.UpdateAsync(role);
+        var isEdited = await roleService.UpdateAsync(role);
 
-        if (isSuccess) return Ok("Success");
-        
-        ModelState.AddModelError("Error", "Something Went Wrong");
-        return StatusCode(500, ModelState);
+        return Ok(isEdited);
     }
-    
-    [Authorize (Roles = "Admin")]
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> RemoveRoleAsync(int id)
-    {
-        var role = await roleService.GetByIdAsync(id);
-        
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
-        try
-        {
-            if (role is not null)
-            {
-                var isDeleted = await roleService.DeleteAsync(role);
 
-                if (isDeleted) return Ok("Successfully deleted");
-            }
-            
-            ModelState.AddModelError("Error", "Something Went Wrong");
-            return StatusCode(500, ModelState);
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteAsync(int id)
+    {
+        var isDeleted = await roleService.DeleteAsync(id);
+        
+        return Ok(isDeleted);
     }
 }

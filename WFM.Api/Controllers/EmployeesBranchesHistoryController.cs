@@ -14,56 +14,18 @@ public class EmployeesBranchesHistoryController(IEmployeesBranchesHistoryService
     public async Task<IActionResult> GetBranchesByEmployeeIdAsync(int employeeId)
     {
         var branches  = await employeeBranchesService.GetBranchesByEmployeeIdAsync(employeeId);
-        
-        try
-        {
-            if (branches.Count == 0)
-            {
-                return NotFound("No branches found");
-            }
+        var result = mapper.Map<IEnumerable<EmployeesBranchesHistoryUxModel>>(branches);
             
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            
-            var result = mapper.Map<IEnumerable<EmployeesBranchesHistoryUxModel>>(branches);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
-    
+
     [Authorize(Roles = "Admin")]
     [HttpGet("{branchId:int}")]
     public async Task<IActionResult> GetEmployeesByBranchIdAsync(int branchId)
     {
-        var employees  = await employeeBranchesService.GetEmployeesByBranchIdAsync(branchId);
-        
-        try
-        {
-            if (employees.Count == 0)
-            {
-                return NotFound("No employees found");
-            }
-            
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            
-            var result = mapper.Map<IEnumerable<EmployeesBranchesHistoryUxModel>>(employees);
-            
-            return Ok(result);
-        }
+        var employees = await employeeBranchesService.GetEmployeesByBranchIdAsync(branchId);
+        var result = mapper.Map<IEnumerable<EmployeesBranchesHistoryUxModel>>(employees);
 
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
 }

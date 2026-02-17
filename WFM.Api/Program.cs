@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using Npgsql;
 using WFM.Database.DbContext;
 using WFM.Api.Mappings;
+using WFM.Api.Middleware;
 using WFM.Api.Services;
 using WFM.Api.Services.Interfaces;
 using WFM.Database.Repositories;
@@ -104,6 +105,14 @@ builder.Services.AddScoped<IEmployeesBranchesHistoryService, EmployeesBranchesHi
 builder.Services.AddScoped<IEmployeesJobHistoryRepository, EmployeesJobHistoryRepository>();
 builder.Services.AddScoped<IEmployeesJobHistoryService, EmployeesJobHistoryService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp",
+        policyBuilder => policyBuilder.WithOrigins("http://localhost:4200")
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -112,9 +121,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowAngularApp");
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapControllers();
 
 app.Run();

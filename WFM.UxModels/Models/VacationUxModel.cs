@@ -2,7 +2,7 @@ namespace WFM.UxModels.Models;
 
 public class VacationUxModel
 {
-    public int VacationId { get; set; }
+    public int Id { get; set; }
 
     public int EmployeeId { get; set; }
 

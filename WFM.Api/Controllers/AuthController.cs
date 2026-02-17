@@ -1,9 +1,7 @@
 using System.Net;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WFM.Api.Services.Interfaces;
-using WFM.Database.Models;
 using WFM.UxModels.Models;
 
 namespace WFM.Api.Controllers;
@@ -19,11 +17,6 @@ public class AuthController(IAuthService authService, IMapper mapper) : Controll
     {
         var isRegistered = await authService.RegisterAsync(user);
 
-        if (!isRegistered)
-        {
-            return BadRequest("Username already exists");
-        }
-
         return Ok(isRegistered);
     }
 
@@ -33,11 +26,6 @@ public class AuthController(IAuthService authService, IMapper mapper) : Controll
     {
         var token = await authService.LoginAsync(model);
 
-        if (token is null)
-        {
-            return BadRequest("Invalid username or password");
-        }
-
-        return Ok(token);
+        return Json(token);
     }
 }

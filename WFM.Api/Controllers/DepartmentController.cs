@@ -14,20 +14,9 @@ public class DepartmentController(IDepartmentService departmentService, IMapper 
 {
     [Authorize]
     [HttpGet]
-    public async Task<IActionResult> GetAllDepartmentsAsync()
+    public async Task<IActionResult> GetAllAsync()
     {
         var departments = await departmentService.GetAllAsync();
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        if (!departments.Any())
-        {
-            return NotFound("No countries");
-        }
-        
         var result = mapper.Map<List<DepartmentUxModel>>(departments);
         
         return Ok(result);
@@ -35,99 +24,45 @@ public class DepartmentController(IDepartmentService departmentService, IMapper 
 
     [Authorize]
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetDepartmentByIdAsync(int id)
+    public async Task<IActionResult> GetByIdAsync(int id)
     {
         var department = await departmentService.GetByIdAsync(id);
-
-        try
-        {
-            if (department is null)
-            {
-                return NotFound("No department with the given id");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        var result = mapper.Map<DepartmentUxModel>(department);
             
-            var result = mapper.Map<DepartmentUxModel>(department);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
 
     [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> AddDepartmentAsync(DepartmentUxModel model)
+    public async Task<IActionResult> AddAsync(DepartmentUxModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var department = mapper.Map<Department>(model);
-        var isSuccessfullyAdded = await departmentService.AddAsync(department);
+        var isAdded = await departmentService.AddAsync(department);
 
-        if (isSuccessfullyAdded) return Ok("Successfully saved.");
-
-        ModelState.AddModelError("", "Something Went Wrong");
-        return StatusCode(500, ModelState);
-
+        return Ok(isAdded);
     }
     
     [Authorize(Roles = "Admin")]
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> EditDepartmentAsync(int id, DepartmentUxModel model)
+    public async Task<IActionResult> EditAsync(int id, DepartmentUxModel model)
     {
-        if (id != model.DepartmentId)
+        if (id != model.Id)
         {
             return BadRequest(ModelState);
         }
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
+        
         var department = mapper.Map<Department>(model);
         var isUpdated = await departmentService.UpdateAsync(department);
 
-        if (isUpdated) return Ok("Success");
-
-        ModelState.AddModelError("", "Something Went Wrong");
-        return StatusCode(500, ModelState);
+        return Ok(isUpdated);
     }
 
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteDepartmentAsync(int id)
+    public async Task<IActionResult> DeleteAsync(int id)
     {
-        var department = await departmentService.GetByIdAsync(id);
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        try
-        {
-            if (department is not null)
-            {
-                var isSuccessfullyDeleted = await departmentService.DeleteAsync(department);
-
-                if (isSuccessfullyDeleted) return Ok("Successfully deleted.");
-            }
-            
-            ModelState.AddModelError("", "Error");
-            return StatusCode(500, ModelState);
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        var isDeleted = await departmentService.DeleteAsync(id);
+        
+        return Ok(isDeleted);
     }
 }

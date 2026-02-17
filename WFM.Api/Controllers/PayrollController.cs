@@ -1,7 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using WFM.Database.Models;
-
 using Microsoft.AspNetCore.Mvc;
 using WFM.Api.Services.Interfaces;
 using WFM.UxModels.Models;
@@ -10,160 +9,68 @@ namespace WFM.Api.Controllers;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
-
 public class PayrollController(IPayrollService payrollService, IMapper mapper) : Controller
 {
-    [Authorize (Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [HttpGet]
-    public async Task<IActionResult> GetAllPayrollsAsync()
+    public async Task<IActionResult> GetAllAsync()
     {
-        var payrolls  = await payrollService.GetAllAsync();
-        
-        try
-        {
-            if (!payrolls.Any())
-            {
-                return NotFound("No payrolls found");
-            }
-            
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        var payrolls = await payrollService.GetAllAsync();
+        var result = mapper.Map<IEnumerable<PayrollUxModel>>(payrolls);
 
-            var result = mapper.Map<IEnumerable<PayrollUxModel>>(payrolls);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
-    
-    [Authorize (Roles = "Admin")]
+
+    [Authorize(Roles = "Admin")]
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetPayrollByIdAsync(int id)
+    public async Task<IActionResult> GetByIdAsync(int id)
     {
         var payroll = await payrollService.GetByIdAsync(id);
+        var result = mapper.Map<PayrollUxModel>(payroll);
 
-        try
-        {
-            if (payroll is null)
-            {
-                return NotFound("No payroll found with the given id");
-            }
-            
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = mapper.Map<PayrollUxModel>(payroll);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
-    
+
     [HttpGet("{employeeId:int}")]
-    public async Task<IActionResult> GetPayrollByEmployeeIdAsync(int employeeId)
+    public async Task<IActionResult> GetByEmployeeIdAsync(int employeeId)
     {
-        var payroll = await payrollService.GetByIdAsync(employeeId);
+        var payroll = await payrollService.GetByEmployeeIdAsync(employeeId);
+        var result = mapper.Map<PayrollUxModel>(payroll);
 
-        try
-        {
-            if (payroll is null)
-            {
-                return NotFound("No payroll found with the given id");
-            }
-            
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = mapper.Map<PayrollUxModel>(payroll);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
-    
-    [Authorize (Roles = "Admin")]
+
+    [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> AddPayrollAsync(PayrollUxModel model)
+    public async Task<IActionResult> AddAsync(PayrollUxModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var payroll = mapper.Map<Payroll>(model);
-        var isSuccess = await payrollService.AddAsync(payroll);
+        var isAdded = await payrollService.AddAsync(payroll);
 
-        if (isSuccess) return Ok("Payroll item was added successfully");
-        
-        ModelState.AddModelError("Error", "Something Went Wrong");
-        return StatusCode(500, ModelState);
-
+        return Ok(isAdded);
     }
-    
-    [Authorize (Roles = "Admin")]
+
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> EditPayrollAsync(int id, PayrollUxModel model)
+    public async Task<IActionResult> EditAsync(int id, PayrollUxModel model)
     {
-        if (id != model.PayrollId)
-        {
-            return BadRequest(ModelState);
-        }
-        if (!ModelState.IsValid)
+        if (id != model.Id)
         {
             return BadRequest(ModelState);
         }
 
         var payroll = mapper.Map<Payroll>(model);
-        var isSuccess = await payrollService.UpdateAsync(payroll);
+        var isEdited = await payrollService.UpdateAsync(payroll);
 
-        if (isSuccess) return Ok("Success");
-        
-        ModelState.AddModelError("Error", "Something Went Wrong");
-        return StatusCode(500, ModelState);
+        return Ok(isEdited);
     }
-    
-    [Authorize (Roles = "Admin")]
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> RemovePayrollItemAsync(int id)
-    {
-        var payrollItem = await payrollService.GetByIdAsync(id);
-        
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
-        try
-        {
-            if (payrollItem is not null)
-            {
-                var isDeleted = await payrollService.DeleteAsync(payrollItem);
 
-                if (isDeleted) return Ok("Successfully deleted");
-            }
-            
-            ModelState.AddModelError("Error", "Something Went Wrong");
-            return StatusCode(500, ModelState);
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteAsync(int id)
+    {
+        var isDeleted = await payrollService.DeleteAsync(id);
+        
+        return Ok(isDeleted);
     }
 }

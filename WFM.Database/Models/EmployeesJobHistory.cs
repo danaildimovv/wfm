@@ -1,9 +1,7 @@
 ﻿namespace WFM.Database.Models;
 
-public partial class EmployeesJobHistory
+public partial class EmployeesJobHistory : Root<int>
 {
-    public int EmployeeJobId { get; set; }
-
     public int EmployeeId { get; set; }
 
     public int JobId { get; set; }

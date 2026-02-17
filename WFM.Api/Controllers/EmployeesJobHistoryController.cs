@@ -15,28 +15,9 @@ public class EmployeesJobHistoryController(IEmployeesJobHistoryService employees
     public async Task<IActionResult> GetJobsByEmployeeIdAsync(int employeeId)
     {
         var jobs  = await employeesJobHistoryService.GetJobsByEmployeeIdAsync(employeeId);
-        
-        try
-        {
-            if (jobs.Count == 0)
-            {
-                return NotFound("No job found");
-            }
+        var result = mapper.Map<IEnumerable<EmployeesJobHistoryUxModel>>(jobs);
             
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            
-            var result = mapper.Map<IEnumerable<EmployeesJobHistoryUxModel>>(jobs);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
     
     [Authorize(Roles = "Admin")]
@@ -44,27 +25,8 @@ public class EmployeesJobHistoryController(IEmployeesJobHistoryService employees
     public async Task<IActionResult> GetEmployeesByJobIdAsync(int jobId)
     {
         var employees  = await employeesJobHistoryService.GetEmployeesByJobIdAsync(jobId);
-        
-        try
-        {
-            if (employees.Count == 0)
-            {
-                return NotFound("No employees found");
-            }
+        var result = mapper.Map<IEnumerable<EmployeesJobHistoryUxModel>>(employees);
             
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            
-            var result = mapper.Map<IEnumerable<EmployeesJobHistoryUxModel>>(employees);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
 }

@@ -2,4 +2,7 @@ using WFM.Database.Models;
 
 namespace WFM.Database.Repositories.Interfaces;
 
-public interface IPayrollRepository : IBaseRepository<Payroll>;
+public interface IPayrollRepository : IBaseRepository<Payroll>
+{
+    Task<Payroll?> GetByEmployeeIdAsync(int employeeId);
+}

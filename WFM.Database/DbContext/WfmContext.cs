@@ -42,11 +42,11 @@ public partial class WfmContext : Microsoft.EntityFrameworkCore.DbContext
     {
         modelBuilder.Entity<Branch>(entity =>
         {
-            entity.HasKey(e => e.BranchId).HasName("branches_pkey");
+            entity.HasKey(e => e.Id).HasName("branches_pkey");
 
             entity.ToTable("branches", "business");
 
-            entity.Property(e => e.BranchId).HasColumnName("branch_id");
+            entity.Property(e => e.Id).HasColumnName("branch_id");
             entity.Property(e => e.BranchName)
                 .HasMaxLength(50)
                 .HasColumnName("branch_name");
@@ -60,11 +60,11 @@ public partial class WfmContext : Microsoft.EntityFrameworkCore.DbContext
 
         modelBuilder.Entity<Country>(entity =>
         {
-            entity.HasKey(e => e.CountryId).HasName("countries_pkey");
+            entity.HasKey(e => e.Id).HasName("countries_pkey");
 
             entity.ToTable("countries", "general");
 
-            entity.Property(e => e.CountryId).HasColumnName("country_id");
+            entity.Property(e => e.Id).HasColumnName("country_id");
             entity.Property(e => e.CountryName)
                 .HasMaxLength(50)
                 .HasColumnName("country_name");
@@ -72,19 +72,19 @@ public partial class WfmContext : Microsoft.EntityFrameworkCore.DbContext
 
         modelBuilder.Entity<Department>(entity =>
         {
-            entity.HasKey(e => e.DepartmentId).HasName("departments_pkey");
+            entity.HasKey(e => e.Id).HasName("departments_pkey");
 
             entity.ToTable("departments", "business");
 
-            entity.Property(e => e.DepartmentId).HasColumnName("department_id");
-            entity.Property(e => e.DepartmentName)
+            entity.Property(e => e.Id).HasColumnName("department_id");
+            entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("department_name");
         });
 
         modelBuilder.Entity<Employee>(entity =>
         {
-            entity.HasKey(e => e.EmployeeId).HasName("employees_pkey");
+            entity.HasKey(e => e.Id).HasName("employees_pkey");
 
             entity.ToTable("employees", "business");
 
@@ -92,7 +92,7 @@ public partial class WfmContext : Microsoft.EntityFrameworkCore.DbContext
 
             entity.HasIndex(e => e.UserId, "employees_user_id_key").IsUnique();
 
-            entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
+            entity.Property(e => e.Id).HasColumnName("employee_id");
             entity.Property(e => e.BranchId).HasColumnName("branch_id");
             entity.Property(e => e.DateOfBirth).HasColumnName("date_of_birth");
             entity.Property(e => e.DateOfEmployment).HasColumnName("date_of_employment");
@@ -157,11 +157,11 @@ public partial class WfmContext : Microsoft.EntityFrameworkCore.DbContext
 
         modelBuilder.Entity<EmployeesBranchesHistory>(entity =>
         {
-            entity.HasKey(e => e.EmployeeBranchId).HasName("employees_branches_history_pkey");
+            entity.HasKey(e => e.Id).HasName("employees_branches_history_pkey");
 
             entity.ToTable("employees_branches_history", "history");
 
-            entity.Property(e => e.EmployeeBranchId).HasColumnName("employee_branch_id");
+            entity.Property(e => e.Id).HasColumnName("employee_branch_id");
             entity.Property(e => e.BranchId).HasColumnName("branch_id");
             entity.Property(e => e.DateEnded).HasColumnName("date_ended");
             entity.Property(e => e.DateStarted).HasColumnName("date_started");
@@ -178,11 +178,11 @@ public partial class WfmContext : Microsoft.EntityFrameworkCore.DbContext
 
         modelBuilder.Entity<EmployeesJobHistory>(entity =>
         {
-            entity.HasKey(e => e.EmployeeJobId).HasName("employees_job_history_pkey");
+            entity.HasKey(e => e.Id).HasName("employees_job_history_pkey");
 
             entity.ToTable("employees_job_history", "history");
 
-            entity.Property(e => e.EmployeeJobId).HasColumnName("employee_job_id");
+            entity.Property(e => e.Id).HasColumnName("employee_job_id");
             entity.Property(e => e.DateEnded).HasColumnName("date_ended");
             entity.Property(e => e.DateStarted).HasColumnName("date_started");
             entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
@@ -199,11 +199,11 @@ public partial class WfmContext : Microsoft.EntityFrameworkCore.DbContext
 
         modelBuilder.Entity<ExperienceLevel>(entity =>
         {
-            entity.HasKey(e => e.ExperienceLevelId).HasName("experience_levels_pkey");
+            entity.HasKey(e => e.Id).HasName("experience_levels_pkey");
 
             entity.ToTable("experience_levels", "general");
 
-            entity.Property(e => e.ExperienceLevelId).HasColumnName("experience_level_id");
+            entity.Property(e => e.Id).HasColumnName("experience_level_id");
             entity.Property(e => e.ExperienceLevelTitle)
                 .HasMaxLength(20)
                 .HasColumnName("experience_level_title");
@@ -211,11 +211,11 @@ public partial class WfmContext : Microsoft.EntityFrameworkCore.DbContext
 
         modelBuilder.Entity<Job>(entity =>
         {
-            entity.HasKey(e => e.JobId).HasName("jobs_pkey");
+            entity.HasKey(e => e.Id).HasName("jobs_pkey");
 
             entity.ToTable("jobs", "business");
 
-            entity.Property(e => e.JobId).HasColumnName("job_id");
+            entity.Property(e => e.Id).HasColumnName("job_id");
             entity.Property(e => e.DepartmentId).HasColumnName("department_id");
             entity.Property(e => e.JobTitle)
                 .HasMaxLength(50)
@@ -229,11 +229,11 @@ public partial class WfmContext : Microsoft.EntityFrameworkCore.DbContext
 
         modelBuilder.Entity<Payroll>(entity =>
         {
-            entity.HasKey(e => e.PayrollId).HasName("payrolls_pkey");
+            entity.HasKey(e => e.Id).HasName("payrolls_pkey");
 
             entity.ToTable("payrolls", "business");
 
-            entity.Property(e => e.PayrollId).HasColumnName("payroll_id");
+            entity.Property(e => e.Id).HasColumnName("payroll_id");
             entity.Property(e => e.EffectiveDate).HasColumnName("effective_date");
             entity.Property(e => e.GrossSalary).HasColumnName("gross_salary");
             entity.Property(e => e.HourlyRate).HasColumnName("hourly_rate");
@@ -243,11 +243,11 @@ public partial class WfmContext : Microsoft.EntityFrameworkCore.DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("roles_pkey");
+            entity.HasKey(e => e.Id).HasName("roles_pkey");
 
             entity.ToTable("roles", "security");
 
-            entity.Property(e => e.RoleId).HasColumnName("role_id");
+            entity.Property(e => e.Id).HasColumnName("role_id");
             entity.Property(e => e.RoleTitle)
                 .HasMaxLength(21)
                 .HasColumnName("role_title");
@@ -255,13 +255,13 @@ public partial class WfmContext : Microsoft.EntityFrameworkCore.DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("users_pkey");
+            entity.HasKey(e => e.Id).HasName("users_pkey");
 
             entity.ToTable("users", "security");
 
             entity.HasIndex(e => e.Username, "users_username_key").IsUnique();
 
-            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.Id).HasColumnName("user_id");
             entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
             entity.Property(e => e.PasswordSalt).HasColumnName("password_salt");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
@@ -277,11 +277,11 @@ public partial class WfmContext : Microsoft.EntityFrameworkCore.DbContext
 
         modelBuilder.Entity<Vacation>(entity =>
         {
-            entity.HasKey(e => e.VacationId).HasName("vacations_pkey");
+            entity.HasKey(e => e.Id).HasName("vacations_pkey");
 
             entity.ToTable("vacations", "history");
 
-            entity.Property(e => e.VacationId).HasColumnName("vacation_id");
+            entity.Property(e => e.Id).HasColumnName("vacation_id");
             entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
             entity.Property(e => e.EndDate).HasColumnName("end_date");
             entity.Property(e => e.Reason)

@@ -1,9 +1,7 @@
 ﻿namespace WFM.Database.Models;
 
-public partial class Branch
+public partial class Branch : Root<int>
 {
-    public int BranchId { get; set; }
-
     public string BranchName { get; set; } = null!;
 
     public int CountryId { get; set; }

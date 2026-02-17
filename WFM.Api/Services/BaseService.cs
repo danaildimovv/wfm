@@ -5,27 +5,35 @@ namespace WFM.Api.Services;
 
 public class BaseService<T>(IBaseRepository<T> repository) : IBaseService<T> where T : class
 {
-    public async Task<T?> GetByIdAsync(int id)
+    public async Task<T> GetByIdAsync(int id)
     {
-        return await repository.GetByIdAsync(id);
+        var entity = await repository.GetByIdAsync(id);
+        ArgumentNullException.ThrowIfNull(entity);
+        
+        return entity;
     }
     public async Task<IEnumerable<T>> GetAllAsync()
     {
         return await repository.GetAllAsync();
     }
 
-    public async Task<bool> AddAsync(T branch)
+    public async Task<bool> AddAsync(T entity)
     {
-        return await repository.AddAsync(branch);
+        ArgumentNullException.ThrowIfNull(entity);
+        return await repository.AddAsync(entity);
     }
 
-    public async Task<bool> UpdateAsync(T branch)
+    public async Task<bool> UpdateAsync(T entity)
     {
-        return await repository.UpdateAsync(branch);
+        ArgumentNullException.ThrowIfNull(entity);
+        return await repository.UpdateAsync(entity);
     }
 
-    public async Task<bool> DeleteAsync(T branch)
+    public async Task<bool> DeleteAsync(int id)
     {
-        return await repository.DeleteAsync(branch);
+        var entity = await GetByIdAsync(id);
+        ArgumentNullException.ThrowIfNull(entity);
+        
+        return await repository.DeleteAsync(entity);
     }
 }

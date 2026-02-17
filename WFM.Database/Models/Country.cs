@@ -1,9 +1,7 @@
 ﻿namespace WFM.Database.Models;
 
-public partial class Country
+public partial class Country : Root<int>
 {
-    public int CountryId { get; set; }
-
     public string CountryName { get; set; } = null!;
 
     public virtual ICollection<Branch> Branches { get; set; } = new List<Branch>();

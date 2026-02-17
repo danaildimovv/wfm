@@ -2,7 +2,7 @@ namespace WFM.UxModels.Models;
 
 public class EmployeesBranchesHistoryUxModel
 {
-    public int EmployeeBranchId { get; set; }
+    public int Id { get; set; }
 
     public int EmployeeId { get; set; }
 

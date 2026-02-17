@@ -13,127 +13,55 @@ public class EmployeeController(IEmployeeService employeeService, IMapper mapper
 {
     [Authorize(Roles = "Admin")]
     [HttpGet]
-    public async Task<IActionResult> GetAllEmployeesAsync()
+    public async Task<IActionResult> GetAllAsync()
     {
         var employees  = await employeeService.GetAllAsync();
-        
-        try
-        {
-            if (!employees.Any())
-            {
-                return NotFound("No employees found");
-            }
+        var result = mapper.Map<IEnumerable<EmployeeUxModel>>(employees);
             
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            
-            var result = mapper.Map<IEnumerable<EmployeeUxModel>>(employees);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
     
     [Authorize]
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetEmployeeByIdAsync(int id)
+    public async Task<IActionResult> GetByIdAsync(int id)
     {
         var employee = await employeeService.GetByIdAsync(id);
+        var result = mapper.Map<EmployeeUxModel>(employee);
 
-        try
-        {
-            if (employee is null)
-            {
-                return NotFound("No employee found with the given id");
-            }
-            
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            
-            var result = mapper.Map<EmployeeUxModel>(employee);
-            
-            return Ok(result);
-        }
-
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(result);
     }
     
     [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> AddEmployeeAsync(EmployeeUxModel model)
+    public async Task<IActionResult> AddAsync(EmployeeUxModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         var employee = mapper.Map<Employee>(model);
-        var isSuccess = await employeeService.AddEmployeeAsync(employee);
+        var isAdded = await employeeService.AddEmployeeAsync(employee);
 
-        if (isSuccess) return Ok("Employee was added successfully");
-        
-        ModelState.AddModelError("Error", "Something Went Wrong");
-        return StatusCode(500, ModelState);
-
+        return Ok(isAdded);
     }
     
     [Authorize]
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> EditEmployeeAsync(int id, EmployeeUxModel model)
+    public async Task<IActionResult> EditAsync(int id, EmployeeUxModel model)
     {
-        if (id != model.EmployeeId)
-        {
-            return BadRequest(ModelState);
-        }
-        if (!ModelState.IsValid)
+        if (id != model.Id)
         {
             return BadRequest(ModelState);
         }
 
         var employee = mapper.Map<Employee>(model);
-        var isSuccess = await employeeService.UpdateEmployeeAsync(employee);
+        var isEdited = await employeeService.UpdateEmployeeAsync(employee);
 
-        if (isSuccess) return Ok("Successfully saved.");
-        
-        ModelState.AddModelError("Error", "Something Went Wrong");
-        return StatusCode(500, ModelState);
+        return Ok(isEdited);
     }
     
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> RemoveEmployeeAsync(int id)
+    public async Task<IActionResult> DeleteAsync(int id)
     {
-        var employee = await employeeService.GetByIdAsync(id);
+        var isDeleted = await employeeService.DeleteAsync(id);
         
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
-        try
-        {
-            if (employee is not null)
-            {
-                var isDeleted = await employeeService.DeleteAsync(employee);
-
-                if (isDeleted) return Ok("Successfully deleted");
-            }
-            
-            ModelState.AddModelError("Error", "Something Went Wrong");
-            return StatusCode(500, ModelState);
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(isDeleted);
     }
 }

@@ -15,7 +15,7 @@ public class EmployeeService(IEmployeeRepository employeeRepository, IEmployeesB
         {
             var employeeBranchesHistory = new EmployeesBranchesHistory()
             {
-                EmployeeId = employee.EmployeeId,
+                EmployeeId = employee.Id,
                 BranchId = employee.BranchId,
                 DateStarted = DateOnly.FromDateTime(DateTime.UtcNow)
             };
@@ -33,7 +33,7 @@ public class EmployeeService(IEmployeeRepository employeeRepository, IEmployeesB
         if (isSuccess)
         {
             var employeeLastBranch = (await employeesBranchesHistoryRepository
-                .GetBranchesByEmployeeIdAsync(employee.EmployeeId))
+                .GetBranchesByEmployeeIdAsync(employee.Id))
                 .FirstOrDefault();
 
             if (employeeLastBranch is not null)
@@ -48,7 +48,7 @@ public class EmployeeService(IEmployeeRepository employeeRepository, IEmployeesB
 
             var employeeBranchesHistory = new EmployeesBranchesHistory()
             {
-                EmployeeId = employee.EmployeeId,
+                EmployeeId = employee.Id,
                 BranchId = employee.BranchId,
                 DateStarted = DateOnly.FromDateTime(DateTime.UtcNow)
             };
